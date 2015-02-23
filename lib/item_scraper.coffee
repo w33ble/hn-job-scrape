@@ -4,7 +4,6 @@ scraper = require './scraper'
 
 module.exports = scraper()
   .scrape ($) ->
-    debug 'scraper has results'
     {
       type: 'submission'
       title: $('.title a').first().text()
