@@ -58,6 +58,7 @@ async.whilst ->
           _.each item.comments, (comment, i) ->
             db('comments').push _.extend {
               submission_id: item.id
+              id: [item.id, i].join '-'
             }, comment
           db.save()
           cb()
