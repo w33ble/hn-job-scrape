@@ -6,13 +6,14 @@ module.exports = scraper()
   .scrape ($) ->
     debug 'scraper has results'
     {
+      type: 'submission'
       title: $('.title a').first().text()
       content: $('table').eq(2).find('tr').eq(3).find('td').eq(1).html()
       comments: $('.default').map( (comment) ->
         {
-          comment: $(this).find('.comment').first().html()
           author: $(this).find('.comhead a').first().text()
           posted: $(this).find('.comhead a').eq(1).html()
+          comment: $(this).find('.comment').first().html()
           links: $(this).find('.comment a').map( ->
             return $(this).attr('href')
           ).toArray()
