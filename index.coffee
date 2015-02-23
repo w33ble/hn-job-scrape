@@ -54,7 +54,7 @@ async.whilst ->
         when 'links'
           item.links.forEach (link) ->
             rDebug 'adding to queue: %s', link.title
-            # addRoute link.link
+            addRoute link.link
           cb()
 
         else

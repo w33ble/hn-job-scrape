@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "DEBUG=scraper,worker nodemon index.coffee",
+    "start": "DEBUG=worker coffee index.coffee",
+    "dev": "DEBUG=scraper,worker nodemon index.coffee",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
