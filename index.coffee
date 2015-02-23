@@ -33,27 +33,23 @@ router.otherwise (url) ->
 
 addRoute 'submitted?id=whoishiring'
 
-# async.whilst ->
-#     rDebug 'routes to process %d', routes.length
-#     routes.length > 0
-#   , (cb) ->
-#     route = routes.shift()
-#     rDebug 'loading route %s', route
-#     router.route route, (success, items) ->
-#       return cb() if !success or !items
+console.error 'not ready to be run'
+return
 
-#       items.each () ->
-#         debug 'adding to queue: %s', this.title
-#         addRoute this.link
-#       cb()
-#   , (err) ->
-#     if (err)
-#       console.error err
-#     console.log 'all done'
+async.whilst ->
+    rDebug 'routes to process %d', routes.length
+    routes.length > 0
+  , (cb) ->
+    route = routes.shift()
+    rDebug 'loading route %s', route
+    router.route route, (success, items) ->
+      return cb() if !success or !items
 
-
-router.route resolve(baseUrl, 'item?id=2396027'), (success, item) ->
-  console.log 'all done', success
-  console.log item.id, item.title
-  console.log '%s comments', item.comments.length
-  console.log item.comments[0]
+      items.each () ->
+        debug 'adding to queue: %s', this.title
+        addRoute this.link
+      cb()
+  , (err) ->
+    if (err)
+      console.error err
+    console.log 'all done'

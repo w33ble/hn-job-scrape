@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon -i node_modules -i bower_components index.coffee",
+    "start": "DEBUG=scraper,worker nodemon index.coffee",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
