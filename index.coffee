@@ -5,7 +5,8 @@ sjs = require 'scraperjs'
 async = require 'async'
 _ = require 'lodash'
 low = require 'lowdb'
-db = low 'data.json'
+db = low 'data.json',
+  autosave: false
 
 list_scraper = require './lib/list_scraper'
 item_scraper = require './lib/item_scraper'
@@ -54,8 +55,11 @@ async.whilst ->
 
           debug '(%d) %s - %d comments', item.id, item.title, item.comments.length
           db('submissions').push _.omit(item, 'comments')
-          _.each item.comments, (comment) ->
-            db('comments').push _.extend { submission_id: item.id }, comment
+          _.each item.comments, (comment, i) ->
+            db('comments').push _.extend {
+              submission_id: item.id
+            }, comment
+          db.save()
           cb()
 
         when 'links'
