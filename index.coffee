@@ -40,12 +40,16 @@ async.whilst ->
     rDebug 'routes to process %d', routes.length
     routes.length > 0
   , (cb) ->
+
     route = routes.shift()
+    # don't re-process routes
+    if db('links').indexOf(route) isnt -1
+      rDebug 'skipping route %s, %d remaining', route, routes.length
+      return cb()
+
     rDebug 'loading route %s, %d remaining', route, routes.length
     router.route route, (success, item) ->
       return cb() if !success or !item
-
-      db('links').push route
 
       switch item.type
         when 'submission'
@@ -54,6 +58,7 @@ async.whilst ->
             return cb()
 
           debug '(%d) %s - %d comments', item.id, item.title, item.comments.length
+          db('links').push route
           db('submissions').push _.omit(item, 'comments')
           _.each item.comments, (comment, i) ->
             db('comments').push _.extend {
