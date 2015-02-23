@@ -3,10 +3,12 @@ debug = require('debug') 'worker'
 rDebug = require('debug') 'router'
 sjs = require 'scraperjs'
 async = require 'async'
+_ = require 'lodash'
+low = require 'lowdb'
+db = low 'data.json'
 
 list_scraper = require './lib/list_scraper'
 item_scraper = require './lib/item_scraper'
-submissionDB = require './lib/submission_db'
 
 router = new sjs.Router({
   # firstMatch: true
@@ -42,6 +44,8 @@ async.whilst ->
     router.route route, (success, item) ->
       return cb() if !success or !item
 
+      db('links').push route
+
       switch item.type
         when 'submission'
           if !item.id
@@ -49,7 +53,10 @@ async.whilst ->
             return cb()
 
           debug '(%d) %s - %d comments', item.id, item.title, item.comments.length
-          submissionDB.put item.id, item, cb
+          db('submissions').push _.omit(item, 'comments')
+          _.each item.comments, (comment) ->
+            db('comments').push _.extend { submission_id: item.id }, comment
+          cb()
 
         when 'links'
           item.links.forEach (link) ->
@@ -63,5 +70,6 @@ async.whilst ->
 
   , (err) ->
     console.error err if err
-    submissionDB.close()
-    console.log 'all done'
+    debug 'saving db...'
+    db.save()
+    console.log 'scraping completed!'
