@@ -6,6 +6,7 @@
   "scripts": {
     "start": "DEBUG=worker coffee index.coffee",
     "dev": "DEBUG=scraper,worker nodemon index.coffee",
+    "indexer": "DEBUG=worker,elasticsearch nodemon indexer.coffee",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -13,6 +14,7 @@
   "dependencies": {
     "async": "^0.9.0",
     "debug": "^2.1.1",
+    "elasticsearch": "^3.1.3",
     "lodash": "^3.3.0",
     "lowdb": "^0.7.1",
     "scraperjs": "^0.3.3"
