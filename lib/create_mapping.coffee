@@ -3,34 +3,61 @@ esDebug = require('debug') 'elasticsearch'
 templateName = 'hn_jobs'
 
 props =
-  "author":
-    "type": "string", "index": "not_analyzed"
-  "comment":
-    "type": "string"
-  "comment_raw":
-    "type": "string", "index": "not_analyzed"
-  "date":
-    "type": "date", "format": "dateOptionalTime"
-  "id":
-    "type": "string"
-  "links":
-    "type": "string"
-  "posted":
-    "type": "string"
-  "submission_id":
-    "type": "string"
-  "title":
-    "type": "string"
+  author:
+    type: "string"
+    index: "not_analyzed"
+  comment:
+    type: "string"
+    # index: "analyzed"
+    analyzer: "my_analyzer"
+  comment_raw:
+    type: "string"
+    index: "not_analyzed"
+  date:
+    type: "date"
+    format: "dateOptionalTime"
+  id:
+    type: "string"
+  links:
+    type: "string"
+  posted:
+    type: "string"
+  submission_id:
+    type: "string"
+  title:
+    type: "string"
 
 body =
-  "template": "hn_jobs-*",
-  "mappings":
-    "hiring":
-      "properties": props
-    "looking":
-      "properties": props
-    "freelance":
-      "properties": props
+  template: "hn_jobs-*",
+  mappings:
+    _default_:
+      properties: props
+    # hiring:
+    #   properties: props
+    # looking:
+    #   properties: props
+    # freelance:
+    #   properties: props
+  settings:
+    analysis:
+      analyzer:
+        my_analyzer:
+          type: 'custom'
+          tokenizer: 'uax_url_email'
+          filter: [
+            'standard'
+            'lowercase'
+            'stop'
+            'my_snow'
+          ]
+          char_filter: [
+            'html_strip'
+          ]
+      filter:
+        my_snow:
+          type: 'snowball'
+          language: 'English'
+
 
 module.exports = (client) ->
   client.indices.getTemplate
