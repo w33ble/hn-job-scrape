@@ -59,11 +59,6 @@ queueBatch = (batch, type) ->
 
 indextype = (match, type) ->
   items = db('comments').chain()
-    .map (item) ->
-      item.comment_raw = item.comment
-      item.comment = item.comment.replace(/<p>/gm, '\n\n').replace(/<(?:.|\n)*?>/gm, '').trim()
-      item.title = getTitle item.submission_id
-      item
     .filter (item) ->
       return if !item.title || !item.date
       item.title.match match
@@ -73,7 +68,7 @@ indextype = (match, type) ->
   batch = []
   items.forEach (item, i) ->
     batch.push { index:
-      _index: indexPrefix + item.date
+      _index: indexPrefix + item.date.replace(/\-/g, '.')
       _type: type
       _id: item.id
     }
@@ -84,9 +79,3 @@ indextype = (match, type) ->
 
   if batch.length > 0
     queueBatch batch.splice(0), type
-
-
-getTitle = _.memoize (id) ->
-  match = db('submissions').find({ id: id+'' })
-  return match.title if match
-  return null
