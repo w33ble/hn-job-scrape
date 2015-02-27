@@ -5,6 +5,7 @@ esDebug = require('debug') 'elasticsearch'
 async = require 'async'
 low = require 'lowdb'
 _ = require 'lodash'
+moment = require 'moment'
 createMapping = require './lib/create_mapping'
 
 esHost = 'localhost:9200'
@@ -29,7 +30,8 @@ db = low 'data.json',
 
 
 # make ES is online
-client.ping()
+client.ping
+  requestTimeout: 1000
 .then (body) ->
   esDebug 'ping successful: %s', esHost
 , (err) ->
@@ -40,7 +42,9 @@ client.ping()
 .then ->
   runTasks()
   runBatches (err) ->
-    return console.error err if err
+    if err
+      console.log 'BATCH ERROR'
+      return console.error err
     debug 'process complete'
 
 runBatches = (cb) ->
@@ -55,10 +59,18 @@ queueBatch = (batch, type) ->
   do ->
     batches.push (cb) ->
       esDebug 'creating %d "%s" records', batch.length / 2, type
-      client.bulk { body: batch }, cb
+      setTimeout ->
+        client.bulk {
+          body: batch
+          requestTimeout: 60000
+        }, cb
+      , 3000
 
 indextype = (match, type) ->
   items = db('comments').chain()
+    .map (item) ->
+      item.date_mst = moment(item.date).add(7, 'h').format('YYYY/MM/DD HH:mm:ss')
+      item
     .filter (item) ->
       return if !item.title || !item.date
       item.title.match match

@@ -15,7 +15,10 @@ props =
     index: "not_analyzed"
   date:
     type: "date"
-    format: "dateOptionalTime"
+    format: "date"
+  date_mst:
+    type: "date"
+    format: "yyyy/MM/dd HH:mm:ss||yyyy/MM/dd"
   id:
     type: "string"
   links:
