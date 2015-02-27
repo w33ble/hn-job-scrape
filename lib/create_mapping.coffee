@@ -50,7 +50,9 @@ body =
           filter: [
             'standard'
             'lowercase'
+            'unique'
             'stop'
+            'my_words'
             'my_snow'
           ]
           char_filter: [
@@ -60,6 +62,13 @@ body =
         my_snow:
           type: 'snowball'
           language: 'English'
+        my_words:
+          type: 'stop'
+          stopwords: [
+            'i'
+            'i\'m'
+            't'
+          ]
 
 
 module.exports = (client) ->
