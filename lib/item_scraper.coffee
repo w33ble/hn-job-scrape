@@ -12,7 +12,7 @@ getDate = (text) ->
   return [
     year
     ("00" + ++month).substr(-2,2)
-    ("00" + d.getDate()).substr(-2,2)
+    # ("00" + d.getDate()).substr(-2,2)
   ].join('-')
 
 

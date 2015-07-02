@@ -79,8 +79,9 @@ indextype = (match, type) ->
 
   batch = []
   items.forEach (item, i) ->
+    date = item.date.replace(/\-/g, '.').substring(0, 7)
     batch.push { index:
-      _index: indexPrefix + item.date.replace(/\-/g, '.')
+      _index: indexPrefix + date
       _type: type
       _id: item.id
     }
