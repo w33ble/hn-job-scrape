@@ -5,14 +5,15 @@ scraper = require './scraper'
 getDate = (text) ->
   return null if !text
   d = new Date()
-  days = text.split('days ago')[0].trim()
+  days = 0
+  days = text.split('days ago')[0].trim() if text.match('days ago')
   d.setDate d.getDate() - days
   month = d.getMonth()
   year = d.getFullYear()
   return [
     year
     ("00" + ++month).substr(-2,2)
-    # ("00" + d.getDate()).substr(-2,2)
+    ("00" + d.getDate()).substr(-2,2)
   ].join('-')
 
 
