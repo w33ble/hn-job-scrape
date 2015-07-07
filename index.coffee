@@ -57,7 +57,7 @@ async.whilst ->
             console.error 'MISSING ID: %s (%s)', item.title, route
             return cb()
 
-          debug '(%d) %s - %d comments', item.id, item.title, item.comments.length
+          debug '(%d) %s - Adding %d entries', item.id, item.title, item.comments.length
           db('links').push route
           db('submissions').push _.omit(item, 'comments')
           _.each item.comments, (comment, i) ->
@@ -70,7 +70,7 @@ async.whilst ->
 
         when 'links'
           item.links.forEach (link) ->
-            rDebug 'adding to queue: %s', link.title
+            rDebug 'adding link to queue: %s', link.title
             addRoute link.link
           cb()
 
