@@ -1,6 +1,8 @@
 resolve = require('url').resolve
-debug = require('debug') 'worker'
-rDebug = require('debug') 'router'
+debug = require('debug')
+debuggers =
+  worker: debug('worker')
+  router: debug('router')
 sjs = require 'scraperjs'
 async = require 'async'
 _ = require 'lodash'
@@ -23,7 +25,7 @@ baseUrl = 'https://news.ycombinator.com'
 routes = []
 addRoute = (path) ->
   return if not path
-  rDebug ['adding route', baseUrl, path].join(' ')
+  debuggers.router ['adding route', baseUrl, path].join(' ')
   routes.push resolve(baseUrl, path)
 
 # parse article list
@@ -35,22 +37,21 @@ router.on 'https?://news.ycombinator.com/item\\?id=:itemId'
 .use item_scraper
 
 router.otherwise (url) ->
-  rDebug '%s was not routed', url
+  debuggers.router '%s was not routed', url
 
 addRoute 'submitted?id=whoishiring'
 
 async.whilst ->
-    rDebug 'routes to process %d', routes.length
-    routes.length > 0
-  , (cb) ->
-
+  debuggers.worker 'routes to process %d', routes.length
+  routes.length > 0
+, (cb) ->
     route = routes.shift()
     # don't re-process routes
     if db('links').indexOf(route) isnt -1
-      rDebug 'skipping route %s, %d remaining', route, routes.length
+      debuggers.router '-- Skipping route %s, %d remaining', route, routes.length
       return cb()
 
-    rDebug 'loading route %s, %d remaining', route, routes.length
+    debuggers.router '++ Loading route %s, %d remaining', route, routes.length
     router.route route, (success, item) ->
       return cb() if !success or !item
 
@@ -60,7 +61,8 @@ async.whilst ->
             console.error 'MISSING ID: %s (%s)', item.title, route
             return cb()
 
-          debug '(%d) %s - Adding %d entries', item.id, item.title, item.comments.length
+          debuggers.worker '(%d) %s - Adding %d entries', item.id, item.title, item.comments.length
+          _.assign item, { url: route }
           db('links').push route
           db('submissions').push _.omit(item, 'comments')
           _.each item.comments, (comment, i) ->
@@ -73,16 +75,17 @@ async.whilst ->
 
         when 'links'
           item.links.forEach (link) ->
-            rDebug 'adding link to queue: %s', link.title
+            debuggers.router 'adding link to queue: %s', link.title
             addRoute link.link
           cb()
 
         else
-          debug 'unknown item type: %s', item.type
+          debuggers.worker 'unknown item type: %s', item.type
           cb()
 
   , (err) ->
     console.error err if err
-    debug 'saving db...'
+    debuggers.worker 'Saving database'
     db.save()
-    console.log 'scraping completed!'
+
+    console.log '+++ Scraping Completed!'
