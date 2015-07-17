@@ -11,6 +11,9 @@ db = low 'data.json',
 list_scraper = require './lib/list_scraper'
 item_scraper = require './lib/item_scraper'
 
+# pre-process the database
+require('./lib/pre_process') db
+
 router = new sjs.Router({
   # firstMatch: true
 })
