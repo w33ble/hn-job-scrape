@@ -6,7 +6,9 @@ Included are the *Who's Hiring*, *Who's Looking*, and *Freelancer* threads, post
 
 The scraper will auto-remove the current month from the existing data set and re-scrape it, so this is useful throughout the month and people continue to post in these threads.
 
-Tested with ES >= version 1.4, 2.0 included.
+Tested with Elasticsearch >= version 1.4, 2.1 included.
+
+![screencap](http://i.imgur.com/AtnMlQ6.png)
 
 # Usage
 
@@ -25,5 +27,3 @@ Any data currently stored for the current month will be removed so that you end 
 ## Resetting data
 
 `npm run reset YYYY MM` will remove data for a given year and month. This is useful for getting an updated dataset for a past month.
-
-![screencap](http://i.imgur.com/AtnMlQ6.png)
