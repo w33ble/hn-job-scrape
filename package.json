@@ -6,7 +6,8 @@
   "scripts": {
     "start": "DEBUG=worker coffee index.coffee",
     "dev": "DEBUG=scraper,worker nodemon index.coffee",
-    "indexer": "DEBUG=worker,elasticsearch nodemon indexer.coffee",
+    "indexer": "DEBUG=worker,elasticsearch coffee indexer.coffee",
+    "reset": "DEBUG=truncate coffee truncate.coffee",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
