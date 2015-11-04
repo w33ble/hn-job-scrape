@@ -1,14 +1,6 @@
-_ = require 'lodash'
-moment = require 'moment'
+truncateMonth = require './truncate_month'
 
 preProcess = (db) ->
-  thisMonth = moment().format 'MMMM YYYY'
-  submissions = db('submissions').filter (sub) -> sub.title.match(thisMonth)
-
-  _.each submissions, (sub) ->
-    db('comments').remove submission_id: sub.id
-    db('submissions').remove id: sub.id
-    db('links').pull sub.url
-  db.save()
+  truncateMonth db
 
 module.exports = preProcess
