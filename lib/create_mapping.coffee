@@ -21,6 +21,7 @@ props =
     format: "yyyy/MM/dd HH:mm:ss||yyyy/MM/dd"
   id:
     type: "string"
+    index: "not_analyzed"
   links:
     type: "string"
   posted:
@@ -35,12 +36,6 @@ body =
   mappings:
     _default_:
       properties: props
-    # hiring:
-    #   properties: props
-    # looking:
-    #   properties: props
-    # freelance:
-    #   properties: props
   settings:
     analysis:
       analyzer:
@@ -69,7 +64,6 @@ body =
             'i\'m'
             't'
           ]
-
 
 module.exports = (client) ->
   client.indices.getTemplate
